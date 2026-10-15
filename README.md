@@ -101,8 +101,8 @@ shopkart/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Rajeevgit29/shopkart_mern_lab_project.git
-cd shopkart_mern_lab_project
+git clone https://github.com/Riya17171/shopkart-mernproject.git
+cd shopkart-mernproject
 ```
 
 ### 2. Configure environment variables
@@ -281,6 +281,6 @@ All responses are JSON with a `success` boolean, plus either the requested data 
 
 ## Author
 
-**Rajeevgit29** · [GitHub](https://github.com/Rajeevgit29)
+**Riya17171** · [GitHub](https://github.com/Riya17171)
 
 Built as a MERN stack lab project.
