@@ -5,7 +5,7 @@ function PublicRoute({ children }) {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return <div className="page-loader"><div className="spinner" /><p>Loading ShopKart...</p></div>;
+        return <div className="page-loader" role="status"><span className="loader-mark">ShopKart</span><span className="loader-bar" /><p>Opening the store...</p></div>;
     }
 
     if (user) return <Navigate to="/home" replace />;

@@ -13,19 +13,21 @@ function Navbar() {
     }
 
     return (
-        <nav className="navbar">
-            <Link className="brand" to="/home"><span className="brand-mark">S</span><span>ShopKart</span></Link>
-            <div className="nav-links">
-                <NavLink to="/products">Products</NavLink>
-                <NavLink to="/wishlist">Wishlist</NavLink>
-                <NavLink to="/cart">Cart <span className="cart-count">{totalItems}</span></NavLink>
-                <NavLink to="/orders">Orders</NavLink>
+        <header className="signboard">
+            <div className="signboard-inner">
+                <Link className="wordmark" to="/home">ShopKart</Link>
+                <nav className="nav-links" aria-label="Main">
+                    <NavLink to="/products">Products</NavLink>
+                    <NavLink to="/wishlist">Wishlist</NavLink>
+                    <NavLink to="/cart">Cart <span className="cart-badge">{totalItems}</span></NavLink>
+                    <NavLink to="/orders">Orders</NavLink>
+                </nav>
+                <div className="nav-account">
+                    <span className="nav-user">{user?.fullName}</span>
+                    <button className="text-button" type="button" onClick={handleLogout}>Log out</button>
+                </div>
             </div>
-            <div className="nav-actions">
-                <span className="nav-user">{user?.fullName}</span>
-                <button className="button button-secondary" onClick={handleLogout}>Log out</button>
-            </div>
-        </nav>
+        </header>
     );
 }
 

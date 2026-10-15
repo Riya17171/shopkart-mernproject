@@ -49,15 +49,15 @@ function Wishlist() {
     return (
         <div className="app-shell">
             <Navbar />
-            <main className="catalog-content">
-                <header className="page-heading">
-                    <div><p className="eyebrow">Saved for later</p><h1>My wishlist</h1></div>
-                    <p>{products.length} {products.length === 1 ? "product" : "products"} saved</p>
+            <main className="page">
+                <header className="page-head">
+                    <h1 className="page-title">Wishlist</h1>
+                    {!loading && !error && <p className="muted">{products.length} saved</p>}
                 </header>
 
                 {loading ? <PageState title="Loading your wishlist..." />
-                    : error ? <PageState title="Unable to load wishlist" message={error} action={<button className="button button-secondary" onClick={loadWishlist}>Try again</button>} />
-                    : products.length === 0 ? <PageState title="Your wishlist is empty" message="Start saving products you love." action={<Link className="button button-primary" to="/products">Browse products</Link>} />
+                    : error ? <PageState title="Your wishlist didn't load" message={error} action={<button className="btn btn-outline" type="button" onClick={loadWishlist}>Try again</button>} />
+                    : products.length === 0 ? <PageState title="Nothing saved yet" message="Tap the heart on any product to save it here." action={<Link className="btn btn-solid" to="/products">Browse products</Link>} />
                     : <section className="product-grid">{products.map((product) => <ProductCard key={product._id} product={product} showRemove onWishlistRemoved={handleRemoved} />)}</section>}
             </main>
         </div>

@@ -32,34 +32,31 @@ function Login() {
     }
 
     return (
-        <main className="auth-layout">
-            <section className="auth-story">
-                <a className="brand brand-light" href="/login"><span className="brand-mark brand-mark-light">S</span><span>ShopKart</span></a>
-                <div className="story-copy">
-                    <p className="eyebrow">Everything you need</p>
-                    <h1>Good finds.<br />Better days.</h1>
-                    <p>Discover thoughtfully selected products for work, home and everything in between.</p>
+        <main className="auth-page">
+            <section className="auth-sign">
+                <div>
+                    <div className="auth-wordmark">Shop<br />Kart</div>
+                    <p className="auth-tagline">Gadgets, books, clothes and homeware in one cart.</p>
                 </div>
-                <p className="story-footnote">Secure shopping, powered by MERN.</p>
+                <p className="auth-footnote">Checkout runs in Razorpay Test Mode, so no real money is charged.</p>
             </section>
 
             <section className="auth-panel">
-                <form className="auth-card" onSubmit={handleSubmit}>
-                    <div className="form-heading">
-                        <p className="eyebrow">Welcome back</p>
-                        <h2>Sign in to ShopKart</h2>
-                        <p>Enter your account details to continue.</p>
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="auth-form-head">
+                        <h1>Sign in</h1>
+                        <p className="muted">Use the email and password you registered with.</p>
                     </div>
-                    {location.state?.message && <div className="alert alert-success">{location.state.message}</div>}
-                    {error && <div className="alert alert-error">{error}</div>}
-                    <label>Email address
-                        <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="you@example.com" autoComplete="email" required />
+                    {location.state?.message && <div className="notice notice-success" role="status">{location.state.message}</div>}
+                    {error && <div className="notice notice-error" role="alert">{error}</div>}
+                    <label className="field">Email address
+                        <input className="input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="you@example.com" autoComplete="email" required />
                     </label>
-                    <label>Password
-                        <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Enter your password" autoComplete="current-password" required />
+                    <label className="field">Password
+                        <input className="input" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Your password" autoComplete="current-password" required />
                     </label>
-                    <button className="button button-primary button-full" disabled={submitting}>{submitting ? "Signing in..." : "Sign in"}</button>
-                    <p className="form-switch">New to ShopKart? <Link to="/register">Create an account</Link></p>
+                    <button className="btn btn-solid btn-block" disabled={submitting}>{submitting ? "Signing in..." : "Sign in"}</button>
+                    <p className="auth-switch">New to ShopKart? <Link to="/register">Create an account</Link></p>
                 </form>
             </section>
         </main>

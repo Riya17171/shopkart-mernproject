@@ -5,7 +5,7 @@ function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return <div className="page-loader"><div className="spinner" /><p>Checking your session...</p></div>;
+        return <div className="page-loader" role="status"><span className="loader-mark">ShopKart</span><span className="loader-bar" /><p>Checking your session...</p></div>;
     }
 
     if (!user) return <Navigate to="/login" replace />;

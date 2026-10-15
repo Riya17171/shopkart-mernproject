@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import PageState from "../components/PageState.jsx";
+import ProgressSteps from "../components/ProgressSteps.jsx";
 import { useAuth } from "../context/authContext.js";
 import { useCart } from "../context/cartContext.js";
 import api from "../services/api.js";
 import formatCurrency from "../utils/formatCurrency.js";
 import loadRazorpay from "../utils/loadRazorpay.js";
+import { checkoutSteps } from "../utils/orders.js";
 
 function Checkout() {
     const { user } = useAuth();
@@ -65,7 +67,7 @@ function Checkout() {
                 description: "ShopKart Order",
                 order_id: checkoutData.razorpayOrderId,
                 prefill: { name: form.fullName, contact: form.phone, email: user?.email },
-                theme: { color: "#1f6049" },
+                theme: { color: "#1b1f5e" },
                 modal: {
                     ondismiss: () => setSubmitting(false)
                 },
@@ -101,38 +103,44 @@ function Checkout() {
     }
 
     if (cartItems.length === 0) {
-        return <div className="app-shell"><Navbar /><main className="catalog-content"><PageState title="Your cart is empty" message="Add products before opening checkout." action={<Link className="button button-primary" to="/products">Browse products</Link>} /></main></div>;
+        return <div className="app-shell"><Navbar /><main className="page"><PageState title="Your cart is empty" message="Add products to your cart before checking out." action={<Link className="btn btn-solid" to="/products">Browse products</Link>} /></main></div>;
     }
 
     return (
         <div className="app-shell">
             <Navbar />
-            <main className="catalog-content">
-                <header className="page-heading"><div><p className="eyebrow">Final step</p><h1>Checkout</h1></div><p>Enter the delivery address, review your cart, and complete a Test Mode payment.</p></header>
+            <main className="page">
+                <ProgressSteps steps={checkoutSteps} current={1} label="Checkout progress" />
+                <header className="page-head"><h1 className="page-title">Checkout</h1></header>
+
                 <form className="checkout-layout" onSubmit={handleSubmit}>
-                    <section className="checkout-form panel-card">
-                        <div><p className="eyebrow">Shipping details</p><h2>Where should we deliver?</h2></div>
-                        {error && <div className="alert alert-error">{error}</div>}
-                        <div className="field-row">
-                            <label>Full name<input name="fullName" value={form.fullName} onChange={handleChange} required /></label>
-                            <label>Phone number<input name="phone" value={form.phone} onChange={handleChange} inputMode="numeric" maxLength="10" required /></label>
+                    <section className="panel checkout-form">
+                        <h2 className="section-title">Delivery address</h2>
+                        <div className="field-pair">
+                            <label className="field">Full name<input className="input" name="fullName" value={form.fullName} onChange={handleChange} autoComplete="name" required /></label>
+                            <label className="field">Phone number<input className="input" name="phone" value={form.phone} onChange={handleChange} inputMode="numeric" maxLength="10" autoComplete="tel-national" required /></label>
                         </div>
-                        <label>Address line<input name="addressLine1" value={form.addressLine1} onChange={handleChange} placeholder="House number and street" required /></label>
-                        <div className="field-row">
-                            <label>City<input name="city" value={form.city} onChange={handleChange} required /></label>
-                            <label>State<input name="state" value={form.state} onChange={handleChange} required /></label>
+                        <label className="field">Address<input className="input" name="addressLine1" value={form.addressLine1} onChange={handleChange} placeholder="House number, street and area" autoComplete="address-line1" required /></label>
+                        <div className="field-pair">
+                            <label className="field">City<input className="input" name="city" value={form.city} onChange={handleChange} autoComplete="address-level2" required /></label>
+                            <label className="field">State<input className="input" name="state" value={form.state} onChange={handleChange} autoComplete="address-level1" required /></label>
                         </div>
-                        <label>Pincode<input name="pincode" value={form.pincode} onChange={handleChange} inputMode="numeric" maxLength="6" required /></label>
+                        <label className="field">Pincode<input className="input" name="pincode" value={form.pincode} onChange={handleChange} inputMode="numeric" maxLength="6" autoComplete="postal-code" required /></label>
                     </section>
 
-                    <aside className="checkout-summary order-summary">
-                        <p className="eyebrow">Order summary</p>
-                        <div className="checkout-items">
-                            {cartItems.map((item) => <p key={item.product._id}><span>{item.product.name} × {item.quantity}</span><strong>{formatCurrency(item.product.price * item.quantity)}</strong></p>)}
-                        </div>
-                        <div className="summary-total"><span>Total</span><strong>{formatCurrency(subtotal)}</strong></div>
-                        <button className="button button-light button-full" disabled={submitting}>{submitting ? "Opening payment..." : "Pay with Razorpay"}</button>
-                        <small>Test Mode only. The backend verifies prices, stock, and payment.</small>
+                    <aside className="receipt">
+                        <h2 className="receipt-title">Your order</h2>
+                        <dl className="receipt-rows">
+                            {cartItems.map((item) => (
+                                <div key={item.product._id}><dt>{item.product.name} × {item.quantity}</dt><dd>{formatCurrency(item.product.price * item.quantity)}</dd></div>
+                            ))}
+                            <div><dt>Delivery</dt><dd>Free</dd></div>
+                        </dl>
+                        <div className="receipt-total"><span>Total</span><strong>{formatCurrency(subtotal)}</strong></div>
+                        {/* Errors sit next to the pay button because that is where the shopper is looking. */}
+                        {error && <div className="notice notice-error" role="alert">{error}</div>}
+                        <button className="btn btn-solid btn-block" disabled={submitting}>{submitting ? "Opening payment..." : `Pay ${formatCurrency(subtotal)}`}</button>
+                        <p className="receipt-note">This is a Razorpay Test Mode payment, so no real money is charged.</p>
                     </aside>
                 </form>
             </main>

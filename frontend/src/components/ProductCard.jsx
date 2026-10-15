@@ -3,6 +3,8 @@ import { useState } from "react";
 import api from "../services/api.js";
 import { useCart } from "../context/cartContext.js";
 import formatCurrency from "../utils/formatCurrency.js";
+import getStockStatus from "../utils/stockStatus.js";
+import { HeartIcon } from "./Icons.jsx";
 
 function ProductCard({ product, onWishlistRemoved, showRemove = false }) {
     const { addToCart, updatingId } = useCart();
@@ -36,25 +38,41 @@ function ProductCard({ product, onWishlistRemoved, showRemove = false }) {
         setMessage(result.success ? "Added to cart." : result.message);
     }
 
+    const saved = wishlistState === "saved";
+    const stock = getStockStatus(product.stock);
+    const heartLabel = showRemove ? "Remove from wishlist" : saved ? "Saved to wishlist" : "Save to wishlist";
+    const productLink = `/products/${product._id}`;
+
     return (
         <article className="product-card">
-            <Link to={`/products/${product._id}`} className="product-image-wrap">
-                <img className="product-image" src={product.image} alt={product.name} />
-            </Link>
-            <div className="product-card-body">
-                <div className="product-meta"><span>{product.category}</span><span>{product.stock > 0 ? `${product.stock} left` : "Out of stock"}</span></div>
-                <h2>{product.name}</h2>
-                <p className="product-price">{formatCurrency(product.price)}</p>
-                <div className="card-actions">
-                    <Link className="button button-secondary" to={`/products/${product._id}`}>Details</Link>
-                    <button className="button button-primary" onClick={handleCart} disabled={product.stock === 0 || updatingId === product._id}>
-                        {updatingId === product._id ? "Adding..." : "Add to cart"}
-                    </button>
-                </div>
-                <button className="wishlist-button" onClick={handleWishlist} disabled={wishlistState === "saving"}>
-                    {wishlistState === "saving" ? "Saving..." : showRemove ? "Remove from wishlist" : wishlistState === "saved" ? "♥ Saved" : "♡ Add to wishlist"}
+            <div className="product-media">
+                {/* The product name below is the accessible link; the image link is a larger click target. */}
+                <Link to={productLink} tabIndex={-1} aria-hidden="true">
+                    <img src={product.image} alt="" />
+                </Link>
+                <button
+                    type="button"
+                    className={saved ? "heart-button is-saved" : "heart-button"}
+                    aria-label={heartLabel}
+                    aria-pressed={showRemove ? undefined : saved}
+                    title={heartLabel}
+                    onClick={handleWishlist}
+                    disabled={wishlistState === "saving"}
+                >
+                    <HeartIcon filled={saved} />
                 </button>
-                {message && <p className="inline-message">{message}</p>}
+                <span className="price-tag">{formatCurrency(product.price)}</span>
+            </div>
+            <div className="product-body">
+                <div className="product-meta">
+                    <span>{product.category}</span>
+                    <span className={`stock-${stock.tone}`}>{stock.label}</span>
+                </div>
+                <h2 className="product-name"><Link to={productLink}>{product.name}</Link></h2>
+                <button className="btn btn-solid btn-block" type="button" onClick={handleCart} disabled={product.stock === 0 || updatingId === product._id}>
+                    {product.stock === 0 ? "Out of stock" : updatingId === product._id ? "Adding..." : "Add to cart"}
+                </button>
+                {message && <p className="card-message" role="status">{message}</p>}
             </div>
         </article>
     );
